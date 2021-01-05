@@ -1,10 +1,11 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from django.contrib.auth.models import User
 from .serializers import UserSerializer, PostSerializer
 from .models import Post
+from .permissions import IsOwnerOrReadOnly
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -15,6 +16,8 @@ class UserViewSet(viewsets.ModelViewSet):
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -23,9 +26,8 @@ class PostViewSet(viewsets.ModelViewSet):
             methods=['GET'],
             name='User like this post')
     def like(self, request, pk=None):
-
         post = Post.objects.get(pk=pk)
-        post.likes.add(self.request.user)
+        post.liked_by.add(self.request.user)
         post.save()
         serializer = self.get_serializer(post, many=False)
         return Response(serializer.data)
@@ -36,7 +38,7 @@ class PostViewSet(viewsets.ModelViewSet):
     def unlike(self, request, pk=None):
 
         post = Post.objects.get(pk=pk)
-        post.likes.remove(self.request.user)
+        post.liked_by.remove(self.request.user)
         post.save()
         serializer = self.get_serializer(post, many=False)
         return Response(serializer.data)

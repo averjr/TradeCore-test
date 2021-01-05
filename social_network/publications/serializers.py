@@ -16,7 +16,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'posts', 'liked', 'password']
+        fields = ['pk', 'username', 'email', 'posts', 'liked', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -24,12 +24,18 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         user = User(**validated_data)
         user.set_password(password)
         user.save()
-        return
+        return user
 
 
 class PostSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
+    liked_by = serializers.HyperlinkedRelatedField(
+                                    many=True,
+                                    read_only=True,
+                                    view_name='user-detail')
+                                    
+    liked_by_me = serializers.ReadOnlyField(source='is_liked_by_me')
 
     class Meta:
         model = Post
-        fields = ['title', 'body', 'owner', 'likes']
+        fields = ['pk', 'title', 'body', 'owner', 'liked_by', 'liked_by_me']
