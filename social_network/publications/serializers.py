@@ -5,10 +5,10 @@ from .helpers import is_existent_email, get_clearbit_data
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    posts = serializers.HyperlinkedRelatedField(
+    posts = serializers.PrimaryKeyRelatedField(
                                     many=True,
-                                    read_only=True,
-                                    view_name='post-detail')
+                                    read_only=True)
+                                    # queryset=Post.objects.all())
     liked = serializers.HyperlinkedRelatedField(
                                     many=True,
                                     read_only=True,
@@ -45,7 +45,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PostSerializer(serializers.HyperlinkedModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
+    owner = serializers.ReadOnlyField(source='owner.pk')
     liked_by = serializers.HyperlinkedRelatedField(
                                     many=True,
                                     read_only=True,

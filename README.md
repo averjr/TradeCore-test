@@ -1,12 +1,27 @@
 # TradeCore-test
 
-Set system variables:
-
+1. Set system variables:
+```
 export HUNTERIO_API_KEY={key}
 CLIARBIT_API_KEY={key}
+```
 
-install requirments
+2. install requirments
+```
+pip install -r requirements.txt
+```
 
-run server
+3. run migration
+```
+./manage.py migrate
+```
 
-run bot
+4. run server
+```
+./manage.py runserver
+```
+
+5. run bot
+```
+python bot.py
+```
