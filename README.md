@@ -3,7 +3,7 @@
 1. Set system variables:
 ```
 export HUNTERIO_API_KEY={key}
-CLIARBIT_API_KEY={key}
+export CLIARBIT_API_KEY={key}
 ```
 
 2. install requirments
